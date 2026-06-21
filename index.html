@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agile PO & SOW Audit Agent</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+</head>
+<body>
+    <div class="glass-bg"></div>
+
+    <div class="app-container">
+        <!-- HEADER SECTION -->
+        <header class="app-header">
+            <div class="brand-section">
+                <div class="logo-circle">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                        <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+                        <line x1="12" y1="22.08" x2="12" y2="12"/>
+                    </svg>
+                </div>
+                <div>
+                    <h1>Agile PO & SOW Audit Agent</h1>
+                    <p>Still manually comparing vendor SOWs and technical specs? It might be time to automate that. 🚀</p>
+                </div>
+            </div>
+            
+            <!-- Quick Sample Loader -->
+            <div id="sampleLoaderSection" style="display: flex; gap: 0.5rem; align-items: center; background: rgba(15, 23, 42, 0.4); padding: 0.5rem 1rem; border-radius: 8px; border: 1px solid var(--border-color);">
+                <span style="font-size: 0.8rem; color: var(--text-secondary); font-weight: 500;">Add Test Doc:</span>
+                <button class="btn-secondary" id="btnLoadSampleSpec" style="font-size: 0.75rem; padding: 0.35rem 0.65rem;">+ Technical Spec</button>
+                <button class="btn-secondary" id="btnLoadSampleSLA" style="font-size: 0.75rem; padding: 0.35rem 0.65rem;">+ Client SLA</button>
+                <button class="btn-secondary" id="btnLoadSampleMarket" style="font-size: 0.75rem; padding: 0.35rem 0.65rem;">+ Market Intel</button>
+                <button class="btn-secondary" id="btnLoadSampleAgreement" style="font-size: 0.75rem; padding: 0.35rem 0.65rem;">+ Supplier SOW</button>
+            </div>
+        </header>
+
+        <!-- API CONFIGURATION PANEL -->
+        <div class="glass-panel" style="margin-bottom: 1.5rem; padding: 1rem 1.5rem; display: flex; flex-wrap: wrap; gap: 1.5rem; align-items: center; justify-content: space-between; background: rgba(30, 41, 59, 0.25);">
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+                <div style="background: rgba(139, 92, 246, 0.15); border: 1px solid var(--accent-purple); border-radius: 8px; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; color: var(--accent-purple); filter: drop-shadow(0 0 4px var(--accent-purple));">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                    </svg>
+                </div>
+                <div>
+                    <div style="font-size: 0.9rem; font-weight: 600; display: flex; align-items: center;">
+                        Gemini LLM Integration
+                        <span id="apiStatusBadge" class="badge-status" style="margin-left: 0.75rem;">Simulation Mode</span>
+                    </div>
+                    <div style="font-size: 0.75rem; color: var(--text-muted);">Enter your Google Gemini key to enable live document audits</div>
+                </div>
+            </div>
+            
+            <div style="display: flex; gap: 1rem; flex: 1; max-width: 650px; justify-content: flex-end; align-items: center; flex-wrap: wrap;">
+                <div class="form-group" style="margin-bottom: 0; min-width: 150px;">
+                    <select id="geminiModel" style="background: rgba(15, 23, 42, 0.6); border: 1px solid var(--border-color); color: var(--text-primary); border-radius: 6px; padding: 0.5rem 0.75rem; font-size: 0.85rem; outline: none; cursor: pointer; width: 100%; height: 38px;">
+                        <option value="gemini-2.5-flash">Gemini 2.5 Flash (Fast)</option>
+                        <option value="gemini-2.5-pro">Gemini 2.5 Pro (Deep PO Reasoning)</option>
+                        <option value="gemini-1.5-flash">Gemini 1.5 Flash</option>
+                    </select>
+                </div>
+                <div class="form-group" style="margin-bottom: 0; flex: 1; max-width: 320px; position: relative;">
+                    <input type="password" id="geminiApiKey" class="text-input" placeholder="Enter Gemini API Key..." style="width: 100%; padding-right: 2.5rem; background: rgba(15, 23, 42, 0.6); border: 1px solid var(--border-color); color: var(--text-primary); border-radius: 6px; padding: 0.5rem 0.75rem; font-size: 0.85rem; outline: none; transition: var(--transition-smooth); height: 38px;">
+                    <button id="btnToggleMaskKey" style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; padding: 4px;">
+                        <svg id="eyeIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M1v12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                            <circle cx="12" cy="12" r="3"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- MAIN DASHBOARD CONTENT -->
+        <main class="dashboard-grid-simple">
+            <!-- LEFT PANEL: DOCUMENT CENTER -->
+            <div class="left-panel flex-column gap-1">
+                
+                <!-- Document Upload Card -->
+                <div class="glass-panel" style="padding: 1.25rem;">
+                    <h3 style="font-size: 0.95rem; font-weight: 600; margin-bottom: 0.75rem; color: var(--text-primary); display: flex; align-items: center; gap: 0.5rem;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/>
+                        </svg>
+                        1. Upload PDF or TXT
+                    </h3>
+                    <div id="uploadContainer" class="upload-zone" style="border: 2px dashed var(--border-color); border-radius: 8px; padding: 1.5rem; text-align: center; cursor: pointer; transition: var(--transition-smooth);">
+                        <input type="file" id="pdfFile" accept=".pdf,.txt,.md" multiple style="display: none;">
+                        <p style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.5rem;">Drag & drop your files here, or click to browse</p>
+                        <span style="font-size: 0.7rem; color: var(--text-muted);">Supports specifications, agreements, or reports</span>
+                        <div id="pdfStatus" style="margin-top: 0.5rem; font-size: 0.75rem; color: var(--text-muted); font-weight: 500;">No files loaded</div>
+                    </div>
+                </div>
+
+                <!-- Text Copy-Paste Fallback Card -->
+                <div class="glass-panel" style="padding: 1.25rem;">
+                    <h3 style="font-size: 0.95rem; font-weight: 600; margin-bottom: 0.75rem; color: var(--text-primary); display: flex; align-items: center; gap: 0.5rem;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                            <polyline points="14 2 14 8 20 8"/>
+                            <line x1="16" y1="13" x2="8" y2="13"/>
+                            <line x1="16" y1="17" x2="8" y2="17"/>
+                        </svg>
+                        2. Copy-Paste Alternative (100% Works)
+                    </h3>
+                    <div class="flex-column gap-0-5">
+                        <input type="text" id="txtTextDocTitle" placeholder="Document Title (e.g. supplier_sow.txt)..." style="background: rgba(15, 23, 42, 0.4); border: 1px solid var(--border-color); color: var(--text-primary); border-radius: 6px; padding: 0.4rem 0.6rem; font-size: 0.8rem; outline: none; width: 100%;">
+                        <textarea id="txtTextDocContent" placeholder="Paste the specification or agreement text here..." style="background: rgba(15, 23, 42, 0.4); border: 1px solid var(--border-color); color: var(--text-primary); border-radius: 6px; padding: 0.5rem; font-size: 0.8rem; outline: none; width: 100%; min-height: 100px; resize: vertical; font-family: var(--font-mono);"></textarea>
+                        <button id="btnAddTextDoc" class="btn-primary" style="font-size: 0.75rem; padding: 0.4rem 1rem; width: auto; align-self: flex-end;">+ Add Document Text</button>
+                    </div>
+                </div>
+
+                <!-- Document Bank List Card -->
+                <div class="glass-panel" style="padding: 1.25rem; flex: 1; display: flex; flex-direction: column;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                        <h3 style="font-size: 0.95rem; font-weight: 600; color: var(--text-primary); display: flex; align-items: center; gap: 0.5rem;">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                                <line x1="9" y1="3" x2="9" y2="21"/>
+                            </svg>
+                            Active Document Bank
+                        </h3>
+                        <button id="btnClearAllDocs" class="btn-secondary" style="font-size: 0.7rem; padding: 0.2rem 0.5rem; color: var(--accent-red); border-color: rgba(239, 68, 68, 0.3);">Clear All</button>
+                    </div>
+                    
+                    <div id="documentList" style="flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 0.5rem; max-height: 250px; padding-right: 0.2rem;">
+                        <!-- Rendered dynamically -->
+                        <div style="color: var(--text-muted); font-size: 0.8rem; text-align: center; padding: 2rem 0;">No documents in bank. Upload files or load sample documents above to begin.</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT PANEL: INTERACTIVE AGENT CHAT -->
+            <div class="right-panel glass-panel" style="padding: 1.25rem; display: flex; flex-direction: column; height: calc(100vh - 12rem); min-height: 500px;">
+                
+                <!-- Chat Header & Quick Shortcuts -->
+                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 0.75rem; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.5rem;">
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--accent-purple);">
+                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                        </svg>
+                        <h2 style="font-size: 1rem; font-weight: 600;">Interactive PO Agent Chat</h2>
+                    </div>
+                    
+                    <div class="quick-shortcuts" style="display: flex; gap: 0.35rem; align-items: center; flex-wrap: wrap;">
+                        <span style="font-size: 0.7rem; color: var(--text-muted); font-weight: 500;">Quick Actions:</span>
+                        <button class="btn-secondary" id="quickPRD" style="font-size: 0.7rem; padding: 0.25rem 0.5rem;">📑 Compile PRD</button>
+                        <button class="btn-secondary" id="quickSOW" style="font-size: 0.7rem; padding: 0.25rem 0.5rem;">🔍 SOW Audit</button>
+                        <button class="btn-secondary" id="quickExplain" style="font-size: 0.7rem; padding: 0.25rem 0.5rem;">💡 Simplify Specs</button>
+                        <button class="btn-secondary" id="quickSLA" style="font-size: 0.7rem; padding: 0.25rem 0.5rem;">⚡ Audit SLAs</button>
+                    </div>
+                </div>
+
+                <!-- Scrollable Chat Bubble Area -->
+                <div id="chatHistory" style="flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 1rem; padding: 0.5rem; margin-bottom: 1rem;">
+                    <div class="chat-message agent-msg" style="display: flex; gap: 0.75rem; align-items: start; background: rgba(139, 92, 246, 0.05); border: 1px solid rgba(139, 92, 246, 0.15); padding: 1rem; border-radius: 8px;">
+                        <div style="background: var(--accent-purple); color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.8rem; flex-shrink: 0; box-shadow: 0 0 8px var(--accent-purple);">PO</div>
+                        <div style="flex: 1; font-size: 0.85rem; line-height: 1.5; color: var(--text-primary);">
+                            Hi! I am your simplified **Agile PO & SOW Audit Agent**. 
+                            I can scan all technical specifications, SLA agreements, and supplier SOWs loaded in the Document Bank.
+                            <br><br>
+                            How I can help you:
+                            <ul style="margin: 0.25rem 0 0 1.2rem; padding: 0; display: flex; flex-direction: column; gap: 0.2rem;">
+                                <li>**Compare Specifications against Contracts** to find gaps in services or deadlines.</li>
+                                <li>**Audit Payment Terms** (milestones, ad-hoc billing rates) under the SOW.</li>
+                                <li>**Verify Service Level Agreements (SLAs)** to check if supplier promises align with your client guarantees.</li>
+                            </ul>
+                            <br>
+                            *Load test documents from the header or upload your own, and ask a question below!*
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Locked Chat Input Row -->
+                <div style="display: flex; gap: 0.5rem; align-items: center; border-top: 1px solid var(--border-color); padding-top: 1rem;">
+                    <input type="text" id="chatInput" placeholder="Ask the PO Agent a question about the documents..." style="flex: 1; background: rgba(15, 23, 42, 0.6); border: 1px solid var(--border-color); color: var(--text-primary); border-radius: 6px; padding: 0.65rem 0.75rem; font-size: 0.85rem; outline: none; transition: var(--transition-smooth);">
+                    <button id="btnSendChat" class="btn-primary" style="width: auto; padding: 0.65rem 1.25rem; font-size: 0.85rem; font-weight: 600; display: inline-flex; align-items: center; gap: 0.35rem;">
+                        Send
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="22" y1="2" x2="11" y2="13"/>
+                            <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                        </svg>
+                    </button>
+                </div>
+                
+                <!-- Direct PRD Download Panel (Floating/In-chat action trigger helper) -->
+                <div id="prdDownloadPanel" style="display: none; justify-content: center; margin-top: 0.75rem; background: rgba(139, 92, 246, 0.08); border: 1px solid rgba(139, 92, 246, 0.2); padding: 0.5rem; border-radius: 6px; align-items: center; justify-content: space-between;">
+                    <span style="font-size: 0.75rem; color: var(--text-secondary); font-weight: 500;">📑 compiled_product_requirement_document.md is ready!</span>
+                    <button id="btnDownloadPRD" class="btn-primary" style="width: auto; padding: 0.35rem 0.75rem; font-size: 0.7rem;">Download PRD (.md)</button>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

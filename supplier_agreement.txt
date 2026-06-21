@@ -1,0 +1,23 @@
+SUPPLIER DEVELOPMENT AGREEMENT & STATEMENT OF WORK V1.0
+
+1. Parties and Scope:
+This agreement is between Apex Software Solutions ("Supplier") and the Product Team ("Client"). The Supplier will provide software development services for the Document Collaboration Module V2.1.
+
+2. Services to be Delivered:
+- Frontend UI development matching client-approved Figma wireframes.
+- Backend API integration using section-based locking synchronizer.
+- Integration of a single-instance Redis cache.
+- Deployment to staging environment and support during manual QA.
+- Production launch support (10 hours post-go-live included).
+
+3. Payment Terms and Milestones:
+- Milestone 1: Down Payment (20% of total fee, $10,000) due upon signing of this contract.
+- Milestone 2: Frontend Delivery (30% of total fee, $15,000) due upon demo and visual approval.
+- Milestone 3: API & Redis Integration (30% of total fee, $15,000) due upon successful deployment to staging and verification of the 2-second synchronization.
+- Milestone 4: Final Sign-off (20% of total fee, $10,000) due within 30 days of production launch and client acceptance.
+- Additional Ad-hoc Services: Billed at $75 per hour, invoiced monthly with Net-15 terms.
+
+4. Performance & Environment SLA:
+- Supplier guarantees 99.0% uptime for the developer staging environment during the testing phase.
+- Critical bugs reported during the 30-day post-launch acceptance window will be patched within 48 hours at no additional cost.
+- Standard payment terms: Net-30 from date of invoice receipt.
